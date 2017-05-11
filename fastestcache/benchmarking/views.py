@@ -19,9 +19,7 @@ def run(request, cache_name):
     t1 = time.time()
     if random.random() < settings.WRITE_CHANCE:
         data.append(t1 - t0)
-        print("WRITE", cache_name, len(str(data)))
         cache.set('benchmarking', data, 100)
-        print(repr(data))
     if data:
         avg = 1000 * sum(data) / len(data)
     else:
