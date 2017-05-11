@@ -154,6 +154,16 @@ CACHES = {
             "COMPRESSOR": "django_redis.compressors.lzma.LzmaCompressor"
         }
     },
+    "hires_msgpack_zlib": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": config('REDIS_LOCATION', 'redis://127.0.0.1:6379') + '/7',
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PARSER_CLASS": "redis.connection.HiredisParser",
+            "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
+            "SERIALIZER": "django_redis.serializers.msgpack.MSGPackSerializer",
+        }
+    },
 }
 
 
