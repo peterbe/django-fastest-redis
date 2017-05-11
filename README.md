@@ -4,7 +4,7 @@ Fastest Redis
 Blog post
 ---------
 
-Please see [Fastest Redis configuration for Django](https://www.peterbe.com/plog/fastest-redis-optimization-for-django)
+Please see [Fastest Redis configuration for Django](https://www.peterbe.com/plog/fastest-redis-optimization-for-django).
 
 Introduction
 ------------
