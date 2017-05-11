@@ -1,6 +1,14 @@
 Fastest Redis
 =============
 
+Blog post
+---------
+
+Please see [Fastest Redis configuration for Django](https://www.peterbe.com/plog/fastest-redis-optimization-for-django)
+
+Introduction
+------------
+
 An experiment ground for testing which way to use Redis
 as a cache backend is the fastest.
 
