@@ -21,6 +21,7 @@ def run(request, cache_name):
         data.append(t1 - t0)
         print("WRITE", cache_name, len(str(data)))
         cache.set('benchmarking', data, 100)
+        print(repr(data))
     if data:
         avg = 1000 * sum(data) / len(data)
     else:
@@ -60,6 +61,10 @@ def summary(request):
         if data is None:
             r.write('Nothing for {}\n'.format(CACHE))
         else:
+            # Always chop off the first measurement because it's usually
+            # way higher than all the others. That way we're only comparing
+            # configurations once they're all warmed up
+            data = data[1:]
             median, avg, stddev = _stats(data)
             avgs.append((CACHE, avg * 1000))
             medians.append((CACHE, median * 1000))
