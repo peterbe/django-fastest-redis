@@ -86,19 +86,14 @@ def summary(request):
 
     print('\n', file=r)
 
-    # print('LENGTH OF STORED KEY (smaller is "better")')
     sizes = []
     for name in settings.CACHE_NAMES:
         connection = get_redis_connection(name)
         sizes.append((name, connection.strlen(":1:benchmarking")))
-        # print(
-        #     name.ljust(30),
-        #     filesizeformat(),
-        #     file=r
-        # )
-        # print(dir(connection))
-        # print(connection.info()['used_memory'])
 
+    graph = Pyasciigraph(
+        human_readable='si',
+    )
     for line in graph.graph('Size of Data Saved (shorter better)', sizes):
         print(line, file=r)
 
