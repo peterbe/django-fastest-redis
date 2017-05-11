@@ -7,7 +7,6 @@ from django_redis import get_redis_connection
 from django import http
 from django.conf import settings
 from django.core.cache import caches
-from django.template.defaultfilters import filesizeformat
 
 
 def run(request, cache_name):
@@ -54,14 +53,16 @@ def summary(request):
     r.write('MEDIAN'.rjust(P))
     r.write('STDDEV'.rjust(P))
     r.write('\n')
-    datas = []
+    avgs = []
+    medians = []
     for CACHE in settings.CACHE_NAMES:
         data = caches[CACHE].get('benchmarking')
         if data is None:
             r.write('Nothing for {}\n'.format(CACHE))
         else:
             median, avg, stddev = _stats(data)
-            datas.append((CACHE, avg * 1000))
+            avgs.append((CACHE, avg * 1000))
+            medians.append((CACHE, median * 1000))
             r.write(
                 '{}{}{}{}{}\n'
                 .format(
@@ -78,7 +79,9 @@ def summary(request):
     graph = Pyasciigraph(
         float_format='{0:,.3f}'
     )
-    for line in graph.graph('Best Averages (shorter better)', datas):
+    for line in graph.graph('Best Averages (shorter better)', avgs):
+        print(line, file=r)
+    for line in graph.graph('Best Medians (shorter better)', medians):
         print(line, file=r)
 
     print('\n', file=r)
