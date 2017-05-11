@@ -155,43 +155,13 @@ CACHES = {
         }
     },
 }
-#
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-#     },
-#     'memcached': {
-#         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-#         'KEY_PREFIX': 'memcached',
-#         'LOCATION': config('MEMCACHED_LOCATION', '127.0.0.1:11211'),
-#     },
-#     'pylibmc': {
-#        'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
-#        'KEY_PREFIX': 'pylibmc',
-#        'LOCATION': config('PYLIBMC_LOCATION', '127.0.0.1:11211'),
-#     },
-#     'redis': {
-#         'BACKEND': 'django_redis.cache.RedisCache',
-#         'LOCATION': config('REDIS_LOCATION', 'redis://127.0.0.1:6379/1'),
-#     },
-#     'hiredis': {
-#         'BACKEND': 'django_redis.cache.RedisCache',
-#         'LOCATION': config('HIREDIS_LOCATION', 'redis://127.0.0.1:6379/2'),
-#         'OPTIONS': {
-#             'PARSER_CLASS': 'redis.connection.HiredisParser',
-#         },
-#     },
-#     'redisjson': {
-#         'BACKEND': 'django_redis.cache.RedisCache',
-#         'LOCATION': config('JSON_REDIS_LOCATION', 'redis://127.0.0.1:6379/3'),
-#         'OPTIONS': {
-#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-#             'SERIALIZER': 'django_redis.serializers.json.JSONSerializer',
-#         },
-#     },
-# }
 
-CACHE_NAMES = config('CACHE_NAMES', default=','.join(list(CACHES.keys())), cast=Csv())
+
+CACHE_NAMES = config(
+    'CACHE_NAMES',
+    default=','.join(list(CACHES.keys())),
+    cast=Csv()
+)
 
 # 1.0 = Always make a write
 WRITE_CHANCE = config('WRITE_CHANCE', 1.0, cast=float)
