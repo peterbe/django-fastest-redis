@@ -9,12 +9,23 @@ Please see [Fastest Redis configuration for Django](https://www.peterbe.com/plog
 Introduction
 ------------
 
-An experiment ground for testing which way to use Redis
+An experiment for testing which way to use Redis
 as a cache backend is the fastest.
 
 All these tests are variations of configurations
-using [django-redis](https://niwinz.github.io/django-redis/latest/).
+using [django-redis](https://github.com/jazzband/django-redis).
 
+What it tests
+-------------
+
+For 1,000 times, for each cache backend, it measures how long it takes to get
+the key back with `data = cache.get("benchmarking", [])`.
+Then, that time is converted to a string (e.g. `'0.0028868750669062138'`).
+
+In the end, it takes all those lists and queries Redis how long that cache key
+is in using `STRLEN`. For cache backends that uses compression that's the size
+of the data in Redis. The smaller that is the more "efficient" the compression
+is.
 
 Sample Run
 ----------
@@ -25,49 +36,54 @@ Start the server:
 
 First run it a bunch of times:
 
-    wrk -d20s "http://127.0.0.1:8000/random"
+    oha -n 1000 "http://127.0.0.1:8888/run/random"
 
 Then to see which was the fastest:
 
-    curl http://127.0.0.1:8000/summary
+    curl http://127.0.0.1:8888/summary
 
 You'll get an output like this:
 
-                             TIMES        AVERAGE        MEDIAN         STDDEV
-    json                      1508        2.178ms        1.551ms        1.866ms
-    lzma                      1110        2.016ms        1.075ms        2.102ms
-    ujson                     1835        1.634ms        0.829ms        1.862ms
-    zlib                      1656        1.618ms        0.781ms        1.882ms
-    hires                     1791        1.513ms        0.743ms        1.701ms
-    default                   1763        1.508ms        0.745ms        1.773ms
-    msgpack                   1784        1.543ms        0.735ms        1.768ms
+                            TIMES        AVERAGE   MEDIAN (P50)   MEDIAN (P90)         STDDEV
+    default                    198        0.181ms        0.176ms        0.216ms        0.038ms
+    zlib                       213        0.190ms        0.182ms        0.237ms        0.039ms
+    lzma                       134        0.273ms        0.272ms        0.332ms        0.042ms
+    zstd                       202        0.192ms        0.180ms        0.243ms        0.046ms
 
-    Best Averages (shorter better)
+    Best Means (shorter better)
     ###############################################################################
-    ███████████████████████████████████████████████████████████████  2.178  json
-    ██████████████████████████████████████████████████████████       2.016  lzma
-    ███████████████████████████████████████████████                  1.634  ujson
-    ██████████████████████████████████████████████                   1.618  zlib
-    ███████████████████████████████████████████                      1.513  hires
-    ███████████████████████████████████████████                      1.508  default
-    ████████████████████████████████████████████                     1.543  msgpack
+    █████████████████████████████████████████                        0.181  default
+    ███████████████████████████████████████████                      0.190  zlib
+    ███████████████████████████████████████████████████████████████  0.273  lzma
+    ████████████████████████████████████████████                     0.192  zstd
+
     Best Medians (shorter better)
     ###############################################################################
-    ███████████████████████████████████████████████████████████████  1.551  json
-    ███████████████████████████████████████████                      1.075  lzma
-    █████████████████████████████████                                0.829  ujson
-    ███████████████████████████████                                  0.781  zlib
-    ██████████████████████████████                                   0.743  hires
-    ██████████████████████████████                                   0.745  default
-    █████████████████████████████                                    0.735  msgpack
-
+    ████████████████████████████████████████                         0.176  default
+    ██████████████████████████████████████████                       0.182  zlib
+    ███████████████████████████████████████████████████████████████  0.272  lzma
+    █████████████████████████████████████████                        0.180  zstd
 
     Size of Data Saved (shorter better)
     ###############################################################################
-    █████████████████████████████████████████████████████████████████  34K  json
-    █████                                                               3K  lzma
-    █████████████████████████████████████████████                      24K  ujson
-    █████████                                                           5K  zlib
-    ██████████████████████████████                                     16K  hires
-    ██████████████████████████████                                     16K  default
-    ██████████████████████████████                                     16K  msgpack
+    ████████████████████████████████████████████████████████████████  5151  default
+    ██████████████████████████                                        2151  zlib
+    █████████████████                                                 1420  lzma
+    ████████████████████████                                          2010  zstd
+
+    Size of Data without Default (shorter better)
+    ###############################################################################
+    ███████████████████████████████████████████████████████████████████  2151  zlib
+    ████████████████████████████████████████████                         1420  lzma
+    ██████████████████████████████████████████████████████████████       2010  zstd
+
+Analysis
+--------
+
+`zstd` requires a third-party package called `pyzstd` whereas `zlib` and `lzma`
+are built in to Python as standard libraries.
+
+On my macOS, `lzma` is the most space efficient but it takes marginally
+longer to retrieve. The benchmark is also run in a GitHub Action workflow.
+There, the fastest is `zlib` and most space efficient is `zlib` too.
+

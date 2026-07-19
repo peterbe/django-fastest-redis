@@ -1,0 +1,52 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Redis Server in GitHub Actions
+        uses: supercharge/redis-github-action@v2
+        with:
+          redis-version: "7"
+
+      - name: Install oha
+        uses: taiki-e/install-action@v2
+        with:
+          tool: oha
+
+      - uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Lint
+        run: uv run ruff check fastestcache
+
+      - name: Start server
+        id: start-server
+        run: uv run gunicorn wsgi -w 1 -b 0.0.0.0:8888 --access-logfile=-
+        background: true # Continues immediately to the next step
+
+      - name: Ping server
+        run: sleep 3 && curl --retry-connrefused --retry 4 --fail http://localhost:8888
+
+      - name: Run benchmark
+        run: sleep 1 && oha -n 1000 -c 1 --no-tui http://localhost:8888/run/random
+
+      - name: Run summary
+        run: sleep 1 && curl http://localhost:8888/summary
+
+      - name: Stop Server
+        cancel: start-server

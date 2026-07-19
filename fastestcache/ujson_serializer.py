@@ -1,10 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import ujson as json
-
 from django.utils.encoding import force_bytes, force_text
-
-
 from django_redis.serializers.base import BaseSerializer
 
 
