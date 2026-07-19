@@ -34,4 +34,4 @@ jobs:
         background: true # Continues immediately to the next step
 
       - name: Ping server
-        run: sleep 5 && curl --retry-connrefused --retry 4 --fail http://localhost:8888
+        run: sleep 3 && curl --retry-connrefused --retry 4 --fail http://localhost:8888
