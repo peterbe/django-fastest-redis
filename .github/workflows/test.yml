@@ -18,6 +18,11 @@ jobs:
         with:
           redis-version: "7"
 
+      - name: Install oha
+        uses: taiki-e/install-action@v2
+        with:
+          tool: oha
+
       - uses: actions/checkout@v7
 
       - name: Install uv
@@ -36,6 +41,12 @@ jobs:
 
       - name: Ping server
         run: sleep 3 && curl --retry-connrefused --retry 4 --fail http://localhost:8888
+
+      - name: Run benchmark
+        run: sleep 1 && oha -n 1000 -c 1 --no-tui http://localhost:8888/run/random
+
+      - name: Run summary
+        run: sleep 1 && curl http://localhost:8888/summary
 
       - name: Stop Server
         cancel: start-server
