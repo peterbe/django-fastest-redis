@@ -30,8 +30,12 @@ jobs:
         run: uv run ruff check fastestcache
 
       - name: Start server
+        id: start-server
         run: uv run gunicorn wsgi -w 1 -b 0.0.0.0:8888 --access-logfile=-
         background: true # Continues immediately to the next step
 
       - name: Ping server
         run: sleep 3 && curl --retry-connrefused --retry 4 --fail http://localhost:8888
+
+      - name: Stop Server
+        cancel: start-server
