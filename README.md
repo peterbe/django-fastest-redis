@@ -83,6 +83,7 @@ Analysis
 `zstd` requires a third-party package called `pyzstd` whereas `zlib` and `lzma`
 are built in to Python as standard libraries.
 
-`lzma` is the most space efficient but it takes marginally longer to retrieve.
-
+On my macOS, `lzma` is the most space efficient but it takes marginally
+longer to retrieve. The benchmark is also run in a GitHub Action workflow.
+There, the fastest is `zlib` and most space efficient is `zlib` too.
 
