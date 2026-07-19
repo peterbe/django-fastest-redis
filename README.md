@@ -32,7 +32,7 @@ Sample Run
 
 Start the server:
 
-    ./manage.py runserver
+    just start
 
 First run it a bunch of times:
 
@@ -86,4 +86,21 @@ are built in to Python as standard libraries.
 On my macOS, `lzma` is the most space efficient but it takes marginally
 longer to retrieve. The benchmark is also run in a GitHub Action workflow.
 There, the fastest is `zlib` and most space efficient is `zlib` too.
+
+Try it yourself
+---------------
+
+First, you need a Redis server running on `redis://127.0.0.1:6379`.
+
+You need `uv` and `just` and `oha`.
+
+Run:
+
+    just install
+    just start
+
+In another terminal run:
+
+    oha -n 1000 "http://127.0.0.1:8888/run/random"
+    curl http://127.0.0.1:8888/summary
 
