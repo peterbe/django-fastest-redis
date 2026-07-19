@@ -30,14 +30,14 @@ def run(request, cache_name):
         cache_name = random.choice(settings.CACHE_NAMES)
 
     cache = caches[cache_name]
-    t0 = time.time()
+    t0 = time.perf_counter()
     data = cache.get("benchmarking", [])
-    t1 = time.time()
+    t1 = time.perf_counter()
     if random.random() < settings.WRITE_CHANCE:
-        data.append(t1 - t0)
+        data.append(str(t1 - t0))
         cache.set("benchmarking", data, 100)
     if data:
-        avg = 1000 * sum(data) / len(data)
+        avg = 1000 * statistics.mean([float(x) for x in data])
     else:
         avg = "notyet"
     return http.HttpResponse("{}\n".format(avg))
@@ -72,6 +72,7 @@ def summary(request):
             # way higher than all the others. That way we're only comparing
             # configurations once they're all warmed up
             data = data[MINIMUM:]
+            data = [float(x) for x in data]
             median = statistics.median(data)
             mean = statistics.mean(data)
             stddev = statistics.stdev(data)
@@ -94,34 +95,33 @@ def summary(request):
     r.write("\n")
 
     graph = Pyasciigraph(float_format="{0:,.3f}")
-    for line in graph.graph("Best Averages (shorter better)", means):
-        print(line, file=r)
-    for line in graph.graph("Best Medians (shorter better)", medians):
-        print(line, file=r)
+    for line in graph.graph("Best Means (shorter better)", means):
+        r.write(line + "\n")
 
-    print("\n", file=r)
+    r.write("\n")
+
+    for line in graph.graph("Best Medians (shorter better)", medians):
+        r.write(line + "\n")
+
+    r.write("\n")
 
     sizes = []
     for name in settings.CACHE_NAMES:
         connection = get_redis_connection(name)
         sizes.append((name, connection.strlen(":1:benchmarking")))
 
-    graph = Pyasciigraph(
-        human_readable="si",
-    )
+    graph = Pyasciigraph()
     for line in graph.graph("Size of Data Saved (shorter better)", sizes):
-        print(line, file=r)
+        r.write(line + "\n")
 
-    print("\n", file=r)
+    r.write("\n")
 
-    graph = Pyasciigraph(
-        human_readable="si",
-    )
+    graph = Pyasciigraph()
     except_default = [(name, size) for name, size in sizes if name != "default"]
     for line in graph.graph(
         "Size of Data without Default (shorter better)", except_default
     ):
-        print(line, file=r)
+        r.write(line + "\n")
 
-    print("\n", file=r)
+    r.write("\n")
     return r
