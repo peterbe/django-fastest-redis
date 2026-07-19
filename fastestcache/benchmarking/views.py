@@ -35,6 +35,7 @@ def run(request, cache_name):
     t1 = time.perf_counter()
     if random.random() < settings.WRITE_CHANCE:
         data.append(str(t1 - t0))
+        print(str(t1 - t0))
         cache.set("benchmarking", data, 100)
     if data:
         avg = 1000 * statistics.mean([float(x) for x in data])
