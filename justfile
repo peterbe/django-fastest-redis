@@ -1,3 +1,6 @@
+install:
+    uv sync
+
 dev:
     uv run manage.py runserver 8888
 
