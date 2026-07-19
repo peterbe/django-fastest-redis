@@ -13,7 +13,7 @@ An experiment ground for testing which way to use Redis
 as a cache backend is the fastest.
 
 All these tests are variations of configurations
-using [django-redis](https://niwinz.github.io/django-redis/latest/).
+using [django-redis](https://github.com/jazzband/django-redis).
 
 Sample Run
 ----------
@@ -24,11 +24,11 @@ Start the server:
 
 First run it a bunch of times:
 
-    oha -n 1000 "http://127.0.0.1:8000/run/random"
+    oha -n 1000 "http://127.0.0.1:8888/run/random"
 
 Then to see which was the fastest:
 
-    curl http://127.0.0.1:8000/summary
+    curl http://127.0.0.1:8888/summary
 
 You'll get an output like this:
 

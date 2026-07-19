@@ -19,6 +19,12 @@ def index(request):
     return r
 
 
+def reset(request):
+    for CACHE in settings.CACHE_NAMES:
+        caches[CACHE].delete("benchmarking")
+    return http.HttpResponse("Done\n")
+
+
 def run(request, cache_name):
     if cache_name == "random":
         cache_name = random.choice(settings.CACHE_NAMES)
@@ -34,7 +40,6 @@ def run(request, cache_name):
         avg = 1000 * sum(data) / len(data)
     else:
         avg = "notyet"
-    # print(cache_name, '#', len(data), 'avg:', avg, ' size:', len(str(data)))
     return http.HttpResponse("{}\n".format(avg))
 
 
@@ -105,6 +110,17 @@ def summary(request):
         human_readable="si",
     )
     for line in graph.graph("Size of Data Saved (shorter better)", sizes):
+        print(line, file=r)
+
+    print("\n", file=r)
+
+    graph = Pyasciigraph(
+        human_readable="si",
+    )
+    except_default = [(name, size) for name, size in sizes if name != "default"]
+    for line in graph.graph(
+        "Size of Data without Default (shorter better)", except_default
+    ):
         print(line, file=r)
 
     print("\n", file=r)

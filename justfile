@@ -1,5 +1,8 @@
 dev:
-    uv run manage.py runserver
+    uv run manage.py runserver 8888
+
+start:
+    uv run gunicorn wsgi -w 4 -b 0.0.0.0:8888 --access-logfile=-
 
 shell:
     uv run manage.py shell
