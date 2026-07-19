@@ -1,11 +1,11 @@
-from django.conf.urls import url
 from django.conf import settings
+from django.urls import path
+
 from .views import run, summary
 
-
-rest = '|'.join(settings.CACHE_NAMES)
+cache_names = "|".join(settings.CACHE_NAMES)
 
 urlpatterns = [
-    url(r'(?P<cache_name>(random|{}))'.format(rest), run),
-    url(r'summary', summary),
+    path("summary", summary),
+    path("<str:cache_name>", run),
 ]

@@ -15,7 +15,6 @@ as a cache backend is the fastest.
 All these tests are variations of configurations
 using [django-redis](https://niwinz.github.io/django-redis/latest/).
 
-
 Sample Run
 ----------
 
@@ -25,7 +24,7 @@ Start the server:
 
 First run it a bunch of times:
 
-    wrk -d20s "http://127.0.0.1:8000/random"
+    oha -n 1000 "http://127.0.0.1:8000/random"
 
 Then to see which was the fastest:
 
