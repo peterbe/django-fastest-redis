@@ -24,7 +24,7 @@ Start the server:
 
 First run it a bunch of times:
 
-    oha -n 1000 "http://127.0.0.1:8000/random"
+    oha -n 1000 "http://127.0.0.1:8000/run/random"
 
 Then to see which was the fastest:
 

@@ -115,14 +115,14 @@ CACHES = {
     #         "SERIALIZER": "django_redis.serializers.msgpack.MSGPackSerializer",
     #     }
     # },
-    "hires": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": config("REDIS_LOCATION", "redis://127.0.0.1:6379") + "/4",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PARSER_CLASS": "redis.connection.HiredisParser",
-        },
-    },
+    # "hires": {
+    #     "BACKEND": "django_redis.cache.RedisCache",
+    #     "LOCATION": config("REDIS_LOCATION", "redis://127.0.0.1:6379") + "/4",
+    #     "OPTIONS": {
+    #         "CLIENT_CLASS": "django_redis.client.DefaultClient",
+    #         "PARSER_CLASS": "redis.connection.HiredisParser",
+    #     },
+    # },
     "zlib": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": config("REDIS_LOCATION", "redis://127.0.0.1:6379") + "/5",
@@ -137,6 +137,14 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "COMPRESSOR": "django_redis.compressors.lzma.LzmaCompressor",
+        },
+    },
+    "zstd": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": config("REDIS_LOCATION", "redis://127.0.0.1:6379") + "/7",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "COMPRESSOR": "django_redis.compressors.zstd.ZStdCompressor",
         },
     },
     # "msgpack_zlib": {
