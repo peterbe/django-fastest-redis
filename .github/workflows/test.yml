@@ -19,7 +19,7 @@ jobs:
           redis-version: "7"
 
       - name: Install oha
-        uses: taiki-e/install-action@v2
+        uses: taiki-e/install-action@v2.85.4
         with:
           tool: oha
 
